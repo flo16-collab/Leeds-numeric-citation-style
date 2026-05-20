@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0"
+       demote-non-dropping-particle="sort-only" default-locale="en-GB">
+
+  <info>
+    <title>Leeds Numeric</title>
+    <id>http://www.zotero.org/styles/leeds-numeric</id>
+    <link href="http://www.zotero.org/styles/leeds-numeric" rel="self"/>
+    <link href="https://library.leeds.ac.uk/info/1402/referencing/51/leeds-numeric-introduction"
+          rel="documentation"/>
+    <author>
+      <name>University of Leeds (style compiled for Mendeley)</name>
+    </author>
+    <category citation-format="numeric"/>
+    <category field="generic-base"/>
+    <updated>2026-05-20T00:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">
+      Creative Commons Attribution-ShareAlike 3.0
+    </rights>
+  </info>
+
+  <!-- ============================================================
+       LOCALE — British English
+       ============================================================ -->
+  <locale xml:lang="en-GB">
+    <terms>
+      <term name="accessed">Accessed</term>
+      <term name="editor"   form="short">ed.</term>
+      <term name="editors"  form="short">eds.</term>
+    </terms>
+  </locale>
+
+  <!-- ============================================================
+       MACROS
+       ============================================================ -->
+
+  <!-- Authors (falls back to editors + "ed./eds." for editor-only works) -->
+  <macro name="author">
+    <names variable="author">
+      <name name-as-sort-order="all" sort-separator=", " delimiter=", "
+            delimiter-precedes-last="never" and="text" initialize-with="."/>
+      <substitute>
+        <names variable="editor">
+          <name name-as-sort-order="all" sort-separator=", " delimiter=", "
+                delimiter-precedes-last="never" and="text" initialize-with="."/>
+          <label form="short" prefix=" "/>
+        </names>
+        <text variable="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <!-- Editor(s) for use after "In:" in chapters: "Jol, H.M. ed." -->
+  <macro name="chapter-editor">
+    <names variable="editor">
+      <name name-as-sort-order="all" sort-separator=", " delimiter=", "
+            delimiter-precedes-last="never" and="text" initialize-with="."/>
+      <label form="short" prefix=" "/>
+    </names>
+  </macro>
+
+  <!-- Year only -->
+  <macro name="year">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+
+  <!-- Day Month (no year) — used for newspaper dates -->
+  <macro name="day-month">
+    <date variable="issued">
+      <date-part name="day"/>
+      <date-part name="month" prefix=" "/>
+    </date>
+  </macro>
+
+  <!-- [Online] — only when a URL is present -->
+  <macro name="online-tag">
+    <choose>
+      <if variable="URL">
+        <text value="[Online]"/>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- [Accessed D Month YYYY] -->
+  <macro name="access-date">
+    <choose>
+      <if variable="accessed">
+        <group prefix="[" suffix="]">
+          <text term="accessed" text-case="capitalize-first" suffix=" "/>
+          <date variable="accessed">
+            <date-part name="day"/>
+            <date-part name="month" prefix=" "/>
+            <date-part name="year"  prefix=" "/>
+          </date>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- Available from: URL -->
+  <macro name="url">
+    <choose>
+      <if variable="URL">
+        <text variable="URL" prefix="Available from: "/>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- pp.X-Y -->
+  <macro name="pages">
+    <choose>
+      <if variable="page">
+        <text variable="page" prefix="pp."/>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- Place: Publisher -->
+  <macro name="publisher">
+    <group delimiter=": ">
+      <text variable="publisher-place"/>
+      <text variable="publisher"/>
+    </group>
+  </macro>
+
+  <!-- ============================================================
+       IN-TEXT CITATION
+       Format: (1) | (1, p.15) | (1, pp.15-16) | (1, 3-5, 9)
+       ============================================================ -->
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="(" suffix=")" delimiter=", ">
+      <text variable="citation-number"/>
+      <choose>
+        <if variable="locator">
+          <group prefix=", ">
+            <label variable="locator" form="short"/>
+            <text variable="locator"/>
+          </group>
+        </if>
+      </choose>
+    </layout>
+  </citation>
+
+  <!-- ============================================================
+       BIBLIOGRAPHY
+       Numbers ordered by first citation in text (Vancouver order).
+       All authors listed — no et al. truncation.
+       ============================================================ -->
+  <bibliography et-al-min="100" et-al-use-first="99" second-field-align="flush">
+    <layout suffix=".">
+      <text variable="citation-number" suffix=". "/>
+
+      <choose>
+
+        <!-- ── JOURNAL ARTICLE ─────────────────────────────────────
+             Author. Title. Journal. [Online]. Year, Vol(Iss), pp.X-Y.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <if type="article-journal article-magazine" match="any">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title"/>
+            <group delimiter=". ">
+              <text variable="container-title" font-style="italic"/>
+              <text macro="online-tag"/>
+            </group>
+            <group delimiter=", ">
+              <text macro="year"/>
+              <group>
+                <text variable="volume" font-weight="bold"/>
+                <text variable="issue" prefix="(" suffix=")"/>
+              </group>
+              <text macro="pages"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </if>
+
+        <!-- ── NEWSPAPER ARTICLE ───────────────────────────────────
+             Author. Title. Newspaper. [Online]. Year, Day Month.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <else-if type="article-newspaper">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title"/>
+            <group delimiter=". ">
+              <text variable="container-title" font-style="italic"/>
+              <text macro="online-tag"/>
+            </group>
+            <group delimiter=", ">
+              <text macro="year"/>
+              <text macro="day-month"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else-if>
+
+        <!-- ── CHAPTER IN EDITED BOOK ──────────────────────────────
+             Author. Chapter title. In: Editor ed. Book title. [Online].
+             Place: Publisher, Year, pp.X-Y.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <else-if type="chapter">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title"/>
+            <group>
+              <text value="In: "/>
+              <group delimiter=". ">
+                <text macro="chapter-editor"/>
+                <group delimiter=". ">
+                  <text variable="container-title" font-style="italic"/>
+                  <text macro="online-tag"/>
+                </group>
+                <group delimiter=", ">
+                  <text macro="publisher"/>
+                  <text macro="year"/>
+                  <text macro="pages"/>
+                </group>
+              </group>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else-if>
+
+        <!-- ── CONFERENCE PAPER ────────────────────────────────────
+             Author. Title. In: Conference Name, Year, Location.
+             Place: Publisher, Year, pp.X-Y.
+             NOTE: CSL cannot store date ranges (e.g. "26-31 July");
+             enter the full date range as a note in Mendeley if needed.-->
+        <else-if type="paper-conference">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title"/>
+            <group>
+              <text value="In: "/>
+              <group delimiter=", ">
+                <text variable="container-title" font-style="italic"/>
+                <text macro="year"/>
+                <text variable="event-place"/>
+              </group>
+            </group>
+            <group delimiter=", ">
+              <text macro="publisher"/>
+              <text macro="year"/>
+              <text macro="pages"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else-if>
+
+        <!-- ── REPORT (corporate or named author) ─────────────────
+             Author/Organisation. Title. [Online].
+             Place: Publisher, Year.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <else-if type="report">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title" font-style="italic"/>
+            <text macro="online-tag"/>
+            <group delimiter=", ">
+              <text macro="publisher"/>
+              <text macro="year"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else-if>
+
+        <!-- ── WEBPAGE ─────────────────────────────────────────────
+             Author. Title. [Online]. Place: Publisher, Year.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <else-if type="webpage post-weblog post" match="any">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title" font-style="italic"/>
+            <text macro="online-tag"/>
+            <group delimiter=", ">
+              <text macro="publisher"/>
+              <text macro="year"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else-if>
+
+        <!-- ── BOOK — print or e-book (default fallback) ──────────
+             Author/Editor. Title. [Online].
+             Place: Publisher, Year.
+             [Accessed D Month YYYY]. Available from: URL           -->
+        <else>
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text variable="title" font-style="italic"/>
+            <text macro="online-tag"/>
+            <group delimiter=", ">
+              <text macro="publisher"/>
+              <text macro="year"/>
+            </group>
+            <text macro="access-date"/>
+            <text macro="url"/>
+          </group>
+        </else>
+
+      </choose>
+    </layout>
+  </bibliography>
+
+</style>
